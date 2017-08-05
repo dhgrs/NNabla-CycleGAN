@@ -15,7 +15,7 @@ from nnabla import monitor as M
 from nets import Generator
 from nets import Discriminator
 from updater import Updater
-from iterator import DataSource
+from data_source import DataSource
 import opt
 
 # Get context.
