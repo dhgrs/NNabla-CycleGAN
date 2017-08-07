@@ -5,9 +5,12 @@ hidden_channel = 256
 out_channel = 3
 
 learning_rate = 0.0002
-weight_decay = 0.0001
 
-max_iter = 10000
+max_iter = 100000
+monitor_interval = 100
+generate_interval = 10000
+save_interval = 10000
 
 monitor_path = 'tmp.monitor.dcgan'
-root_path = '/data/datasets/CelebA/Img/img_align_celeba_png/'
+model_save_path = 'tmp.monitor.dcgan'
+root = 'CelebA/'

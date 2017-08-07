@@ -1,3 +1,4 @@
+import os
 import random
 
 import numpy as np
@@ -12,7 +13,7 @@ from nnabla.utils import data_source
 
 
 class DataSource(data_source.DataSource):
-    def __init__(self, paths, shuffle=None, rng=None):
+    def __init__(self, paths, root, shuffle=None, rng=None):
         super(DataSource, self).__init__(shuffle=shuffle, rng=rng)
         super(DataSource, self).reset()
         if shuffle:
@@ -21,13 +22,15 @@ class DataSource(data_source.DataSource):
         else:
             self._order = list(range(self._size))
         self.paths = paths
+        self.root = root
         self._size = len(paths)
         self._variables = ['x' + str(x)
                            for x in range(len(self._get_data(0)))]
 
     def _get_data(self, position):
         path = self.paths[position]
-        f = Image.open(path)
+        f = Image.open(os.path.join(self.root, path))
+        # f = f.resize((109, 89), Image.ANTIALIAS)
         try:
             image = np.asarray(f, dtype=np.float32)
         finally:

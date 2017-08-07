@@ -20,34 +20,35 @@ def downsample(x, c):
 
 
 class Generator(object):
-    def __init__(self, scope, shape, hidden_channel, out_channel):
+    def __init__(self, scope, hidden_channel, out_channel):
         self.scope = scope
-        self.shape = shape
         self.hidden_channel = hidden_channel
         self.out_channel = out_channel
-
-    def make_z(self, batch_size):
-        return np.random.randn(batch_size, *self.shape)
 
     def set_solver(self, solver):
         with nn.parameter_scope(self.scope):
             solver.set_parameters(nn.get_parameters())
 
-    def __call__(self, z, test=False):
+    def __call__(self, x, test=False):
         with nn.parameter_scope(self.scope):
-            with nn.parameter_scope('fc1'):
-                h1 = F.elu(PF.affine(z, 8 * 8))
-                h1 = h1.reshape((z.shape[0], 1, 8, 8))
+            with nn.parameter_scope('conv1'):
+                h1 = F.elu(bn(downsample(x, self.hidden_channel), test))
+            with nn.parameter_scope('conv2'):
+                h2 = F.elu(bn(downsample(h1, self.hidden_channel // 8), test))
+            with nn.parameter_scope('conv3'):
+                h3 = F.elu(bn(downsample(h2, self.hidden_channel // 4), test))
+            with nn.parameter_scope('conv4'):
+                h4 = F.elu(bn(downsample(h3, self.hidden_channel // 2), test))
             with nn.parameter_scope('deconv1'):
-                h2 = F.elu(bn(upsample(h1, self.hidden_channel), test))
+                h5 = F.elu(bn(upsample(h4, self.hidden_channel), test))
             with nn.parameter_scope('deconv2'):
-                h3 = F.elu(bn(upsample(h2, self.hidden_channel // 2), test))
+                h6 = F.elu(bn(upsample(h5, self.hidden_channel // 2), test))
             with nn.parameter_scope('deconv3'):
-                h4 = F.elu(bn(upsample(h3, self.hidden_channel // 4), test))
+                h7 = F.elu(bn(upsample(h6, self.hidden_channel // 4), test))
             with nn.parameter_scope('deconv4'):
-                h5 = F.elu(bn(upsample(h4, self.hidden_channel // 8), test))
+                h8 = F.elu(bn(upsample(h7, self.hidden_channel // 8), test))
             with nn.parameter_scope('conv5'):
-                y = F.tanh(PF.convolution(h5, self.out_channel,
+                y = F.tanh(PF.convolution(h8, self.out_channel,
                                           kernel=(3, 3), pad=(1, 1)))
         return y
 
