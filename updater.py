@@ -7,10 +7,11 @@ def softplus(x):
 
 
 class Updater(object):
-    def __init__(self, batch_size, input_shape, iterator_A, iterator_B,
+    def __init__(self, batch_size, lmd, input_shape, iterator_A, iterator_B,
                  gen_AB, gen_BA, dis_A, dis_B,
                  solver_gen_AB, solver_gen_BA, solver_dis_A, solver_dis_B):
         self.batch_size = batch_size
+        self.lmd = lmd
         self.input_shape = input_shape
         self.iterator_A = iterator_A
         self.iterator_B = iterator_B
@@ -69,7 +70,7 @@ class Updater(object):
         self.loss_gan_dis = self.loss_gan_dis_A + self.loss_gan_dis_B
 
         # culculate sum of loss
-        self.loss_gen = self.loss_cyc + self.loss_gan_gen
+        self.loss_gen = self.lmd * self.loss_cyc + self.loss_gan_gen
         self.loss_dis = self.loss_gan_dis
 
     def update_gen(self, loss):
@@ -97,11 +98,12 @@ class Updater(object):
         self.x_B.d = image_B
 
         # update
-        self.update_gen(self.loss_cyc)
-        if iteration % 2 == 0:
-            self.update_gen(self.loss_gan_gen)
-        else:
-            self.update_dis(self.loss_gan_dis)
+        self.update_gen(self.loss_gen)
+        self.update_dis(self.loss_dis)
+        # if iteration % 2 == 0:
+        #     self.update_gen(self.loss_gan_gen)
+        # else:
+        #     self.update_dis(self.loss_gan_dis)
 
         return (self.x_A, self.x_AB, self.x_ABA,
                 self.x_B, self.x_BA, self.x_BAB,

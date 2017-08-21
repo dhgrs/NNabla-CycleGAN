@@ -75,18 +75,21 @@ solver_dis_A = S.Adam(opt.learning_rate, beta1=0.5)
 solver_dis_B = S.Adam(opt.learning_rate, beta1=0.5)
 
 # define updater
-updater = Updater(opt.batch_size, opt.input_shape, iterator_A, iterator_B,
-                  gen_AB, gen_BA, dis_A, dis_B,
+updater = Updater(opt.batch_size, opt.lmd, opt.input_shape,
+                  iterator_A, iterator_B, gen_AB, gen_BA, dis_A, dis_B,
                   solver_gen_AB, solver_gen_BA, solver_dis_A, solver_dis_B)
 
 # define monitor
 monitor = M.Monitor(opt.monitor_path)
-monitor_loss_cyc = M.MonitorSeries('Cycle loss', monitor, interval=opt.monitor_interval)
-monitor_loss_gen = M.MonitorSeries('Generator loss', monitor, interval=opt.monitor_interval)
+monitor_loss_cyc = M.MonitorSeries('Cycle loss', monitor,
+                                   interval=opt.monitor_interval)
+monitor_loss_gen = M.MonitorSeries('Generator loss', monitor,
+                                   interval=opt.monitor_interval)
 
 monitor_loss_dis = M.MonitorSeries(
     'Discriminator loss', monitor, interval=opt.monitor_interval)
-monitor_time = M.MonitorTimeElapsed('Time', monitor, interval=opt.monitor_interval)
+monitor_time = M.MonitorTimeElapsed('Time', monitor,
+                                    interval=opt.monitor_interval)
 monitor_A = M.MonitorImageTile(
     'Fake images_A', monitor, normalize_method=lambda x: x + 1 / 2.,
     interval=opt.generate_interval)

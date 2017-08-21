@@ -5,12 +5,13 @@ hidden_channel = 256
 out_channel = 3
 
 learning_rate = 0.0002
+lmd = 10
 
 max_iter = 100000
 monitor_interval = 100
 generate_interval = 10000
 save_interval = 10000
 
-monitor_path = 'tmp.monitor.dcgan'
-model_save_path = 'tmp.monitor.dcgan'
-root = 'CelebA/'
+monitor_path = 'monitor.cyclegan'
+model_save_path = 'monitor.cyclegan'
+root = '/data/datasets/CelebA/'
