@@ -1,5 +1,5 @@
 # NNabla-CycleGAN
-A Chainer implementation of Wasserstein GAN.
+A NNabla implementation of CycleGAN.
 
 # Requirements
 - Python3
